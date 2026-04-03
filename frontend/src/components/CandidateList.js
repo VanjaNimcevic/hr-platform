@@ -11,6 +11,8 @@ function CandidateList() {
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [skillId, setSkillId] = useState('');
     const [allSkills, setAllSkills] = useState([]);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editCandidate, setEditCandidate] = useState(null);
 
     useEffect(() => {
         fetchCandidates();
@@ -52,6 +54,19 @@ function CandidateList() {
                     alert('Greška pri brisanju!');
                 });
         }
+    };
+    const updateCandidate = () => {
+        axios.put(`http://localhost:8080/api/candidates/${editCandidate.id}`, {
+            fullName: editCandidate.fullName,
+            dob: editCandidate.dob,
+            phone: editCandidate.phone,
+            email: editCandidate.email
+        })
+            .then(() => {
+                fetchCandidates();
+                setShowEditModal(false);
+            })
+            .catch(() => alert('Greška pri ažuriranju kandidata!'));
     };
 
     const openModal = (candidate) => {
@@ -164,6 +179,15 @@ function CandidateList() {
                                 Veštine
                             </button>
                             <button
+                                className="btn btn-warning btn-sm me-2"
+                                onClick={() => {
+                                    setEditCandidate(candidate);
+                                    setShowEditModal(true);
+                                }}
+                            >
+                                Izmeni
+                            </button>
+                            <button
                                 className="btn btn-danger btn-sm"
                                 onClick={() => deleteCandidate(candidate.id)}
                             >
@@ -221,6 +245,69 @@ function CandidateList() {
                     </Button>
                     <Button variant="primary" onClick={addSkillToCandidate}>
                         Dodaj Veštinu
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Izmeni Kandidata</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="mb-3">
+                        <label className="form-label">Ime i prezime</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={editCandidate?.fullName || ''}
+                            onChange={(e) => setEditCandidate({
+                                ...editCandidate,
+                                fullName: e.target.value
+                            })}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Datum rođenja</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={editCandidate?.dob || ''}
+                            onChange={(e) => setEditCandidate({
+                                ...editCandidate,
+                                dob: e.target.value
+                            })}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Telefon</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={editCandidate?.phone || ''}
+                            onChange={(e) => setEditCandidate({
+                                ...editCandidate,
+                                phone: e.target.value
+                            })}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Email</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            value={editCandidate?.email || ''}
+                            onChange={(e) => setEditCandidate({
+                                ...editCandidate,
+                                email: e.target.value
+                            })}
+                        />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+                        Odustani
+                    </Button>
+                    <Button variant="primary" onClick={updateCandidate}>
+                        Sačuvaj
                     </Button>
                 </Modal.Footer>
             </Modal>
