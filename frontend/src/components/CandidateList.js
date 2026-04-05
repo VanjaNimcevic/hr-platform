@@ -132,7 +132,7 @@ function CandidateList() {
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Pretraži po veštini (npr. Java)..."
+                        placeholder="Pretraži po veštini, koristiti zarez za vise veština (primer:Java,React)"
                         value={searchSkill}
                         onChange={(e) => setSearchSkill(e.target.value)}
                     />
